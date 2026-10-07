@@ -1,4 +1,4 @@
-import { Injectable, NotImplementedException, ConflictException } from '@nestjs/common';
+import { Injectable, NotImplementedException, ConflictException, NotFoundException } from '@nestjs/common';
 import { Book, Paginated } from './book.entity';
 import { SEED_BOOKS } from './books.seed';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -53,7 +53,13 @@ export class BooksService {
 
   // TODO (Task 4): return the book or throw a 404 "Book with id <id> not found".
   findOne(id: number): Book {
-    throw new NotImplementedException();
+    const book = this.books.find(book => book.id === id)
+
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} not found`)
+    }
+
+    return book;
   }
 
   // TODO (Task 2): create the book (apply defaults, reject duplicate ISBNs with 409).

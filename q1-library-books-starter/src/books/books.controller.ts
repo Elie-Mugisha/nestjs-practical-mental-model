@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { QueryBooksDto } from './dto/query-books.dto';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -13,6 +13,13 @@ export class BooksController {
   }
 
   // TODO (Task 4): GET    /books/:id
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.booksService.findOne(id)
+  }
+
+
+  
   // TODO (Task 2): POST   /books
   @Post()
   create(@Body() dto: CreateBookDto) {
