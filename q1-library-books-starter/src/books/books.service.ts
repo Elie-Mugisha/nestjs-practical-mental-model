@@ -14,7 +14,41 @@ export class BooksService {
   // TODO (Task 3): filter by author / genre / available and paginate.
   // Must return a Paginated<Book> (see book.entity.ts).
   findAll(query: QueryBooksDto): Book[] | Paginated<Book> {
-    return this.books;
+    let filtered = this.books;
+
+    if (query.author) {
+      const authorQuery = query.author.toLowerCase();
+      filtered = filtered.filter((book) => book.author.toLowerCase().includes(authorQuery))
+    }
+
+    if (query.genre) {
+      const genreQuery = query.genre.toLowerCase();
+      filtered = filtered.filter((book) => book.genres.some((g) => g.toLowerCase() === genreQuery))
+    }
+
+    if (query.available !== undefined) {
+      filtered = filtered.filter((book) => book.available === query.available);
+    }
+
+    filtered.sort((a, b) => a.id - b.id);
+
+    const total = filtered.length;
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const totalPages = Math.ceil(total / limit);
+
+    const startIndex = (page - 1) * limit
+    const data = filtered.slice(startIndex, startIndex + limit)
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages
+      }
+    }
   }
 
   // TODO (Task 4): return the book or throw a 404 "Book with id <id> not found".
