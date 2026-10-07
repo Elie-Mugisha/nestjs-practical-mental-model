@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { QueryBooksDto } from './dto/query-books.dto';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -37,4 +37,9 @@ export class BooksController {
   }
   
   // TODO (Task 6): DELETE /books/:id
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.booksService.remove(id)
+  }
 }

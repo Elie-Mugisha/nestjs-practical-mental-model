@@ -100,6 +100,10 @@ export class BooksService {
 
   // TODO (Task 6): delete a book.
   remove(id: number): void {
-    throw new NotImplementedException();
+    const index = this.books.findIndex(b => b.id === id);
+    if (index === -1) {
+      throw new NotFoundException(`Book with id ${id} not found`);
+    }
+    this.books.splice(index, 1);
   }
 }
