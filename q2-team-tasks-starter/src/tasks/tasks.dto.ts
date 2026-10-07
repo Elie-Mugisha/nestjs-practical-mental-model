@@ -17,8 +17,8 @@ export class CreateTaskDto {
   status?: TaskStatus;
 
   // BUG (Task 4): clients should not be able to choose the owner of a task.
-  @IsInt()
-  ownerId: number;
+  // @IsInt()
+  // ownerId: number;
 }
 
 export class UpdateTaskDto extends PartialType(CreateTaskDto) {}

@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Task, TaskStatus } from './task.entity';
 import { CreateTaskDto, UpdateTaskDto } from './tasks.dto';
+import { Role, User } from '../users/user.entity';
 
 const SEED_TASKS: Task[] = [
   { id: 1, title: 'Set up CI pipeline', description: '', status: TaskStatus.Done, ownerId: 2 },
@@ -24,20 +25,25 @@ export class TasksService {
     return task;
   }
 
-  create(dto: CreateTaskDto): Task {
+  create(dto: CreateTaskDto, ownerId: number): Task {
     const task: Task = {
       id: this.nextId++,
       title: dto.title,
       description: dto.description ?? '',
       status: dto.status ?? TaskStatus.Todo,
-      ownerId: dto.ownerId,
+      ownerId,
     };
     this.tasks.push(task);
     return task;
   }
 
-  update(id: number, dto: UpdateTaskDto): Task {
+  update(id: number, dto: UpdateTaskDto, currentUser: User): Task {
     const task = this.findOne(id);
+
+    if (currentUser.role === Role.Member && task.ownerId !== currentUser.id) {
+      throw new ForbiddenException('You can only modify your own tasks');
+    }
+    
     Object.assign(task, dto);
     return task;
   }
