@@ -85,7 +85,17 @@ export class BooksService {
 
   // TODO (Task 5): partially update a book.
   update(id: number, dto: UpdateBookDto): Book {
-    throw new NotImplementedException();
+    const book = this.findOne(id)
+
+    if (dto.isbn && dto.isbn !== book.isbn) {
+      const conflict = this.books.find(b => b.isbn === dto.isbn && b.id !== id);
+      if (conflict) {
+        throw new ConflictException(`A book with ISBN ${dto.isbn} already exists`);
+      }
+    }
+
+    Object.assign(book, dto);
+    return book;
   }
 
   // TODO (Task 6): delete a book.
