@@ -1,4 +1,4 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { Injectable, NotImplementedException, ConflictException } from '@nestjs/common';
 import { Book, Paginated } from './book.entity';
 import { SEED_BOOKS } from './books.seed';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -24,7 +24,23 @@ export class BooksService {
 
   // TODO (Task 2): create the book (apply defaults, reject duplicate ISBNs with 409).
   create(dto: CreateBookDto): Book {
-    throw new NotImplementedException();
+    const existing = this.books.find((b) => b.isbn === dto.isbn);
+    if (existing) {
+      throw new ConflictException(`A book with ISBN ${dto.isbn} already exists`);
+    }
+
+    const newBook: Book = {
+      id: this.nextId++,
+      title: dto.title,
+      author: dto.author,
+      isbn: dto.isbn,
+      publishedYear: dto.publishedYear,
+      genres: dto.genres ?? [],
+      available: dto.available ?? true,
+    }
+
+    this.books.push(newBook);
+    return newBook;
   }
 
   // TODO (Task 5): partially update a book.
