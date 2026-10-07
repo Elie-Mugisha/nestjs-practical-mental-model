@@ -1,8 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
+import { Public } from './auth/public.decorator';
 
 // TODO (Task 2): both routes in this controller must stay reachable WITHOUT a token.
 @Controller()
 export class AppController {
+  @Public()
   @Get()
   info() {
     return {
@@ -16,6 +18,7 @@ export class AppController {
     };
   }
 
+  @Public()
   @Get('health')
   health() {
     return { status: 'ok' };
